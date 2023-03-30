@@ -1,0 +1,20 @@
+query people {
+  users {
+    name
+  }
+  githubUsers {
+    id 
+    login
+    avatarUrl
+  }
+  testquery {
+    jmeno
+    adresa
+    oblibene_cislo
+  }
+}
+#query documents ($typeFilter: [DocumentType!]) {
+#  documents(typeFilter: $typeFilter) {
+#   id
+#  }
+#}
