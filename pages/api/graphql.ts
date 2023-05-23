@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable no-useless-catch */
-import axios from 'axios';
+import { firestore } from 'firebase-admin';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { gql } from 'graphql-tag';
 import { createSchema, createYoga } from 'graphql-yoga';
@@ -36,38 +36,10 @@ const typeDefs = gql`
   }
 `;
 
-const resolvers = {
-  Query: {
-    users: () => {
-      return [{ name: 'Nextjs' }];
-    },
-    githubUsers: async (root_, args_, context: Context) => {
-      try {
-        const users = await axios.get('https://api.github.com/users');
-        return users.data.map(({ id, login, avatar_url: avatarUrl }) => ({
-          id,
-          login,
-          avatarUrl,
-        }));
-      } catch (error) {
-        throw error;
-      }
-    },
-    testquery: () => {
-      return [
-        {
-          jmeno: 'test',
-          adresa: 'tady',
-          oblibene_cislo: 4,
-        },
-      ];
-    },
-  },
-};
+const db = firestore();
 
 const schema = createSchema({
   typeDefs,
-  resolvers,
 });
 
 export const config = {

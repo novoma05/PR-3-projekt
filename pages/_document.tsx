@@ -57,13 +57,11 @@ MyDocument.getInitialProps = async (ctx) => {
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
 
-  /* eslint-disable */
   ctx.renderPage = () =>
     originalRenderPage({
       enhanceApp: (App: any) => (props) =>
         <App emotionCache={cache} {...props} />,
     });
-  /* eslint-enable */
 
   const initialProps = await Document.getInitialProps(ctx);
   const apolloClient = getApolloClient({ forceNew: true });

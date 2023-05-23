@@ -1,4 +1,5 @@
-import { adminAuth } from "./firebase-admin-config";
+import { adminAuth } from './firebase-admin-config';
+
 export const verifyToken = async (token: string) => {
   try {
     const parts = token.split(' ');
@@ -10,8 +11,8 @@ export const verifyToken = async (token: string) => {
     const { email } = decoded;
     console.info('verified token for user', { email });
     return decoded;
-  } catch (e) {
-    console.warn('verified token failed', e);
+  } catch (error) {
+    console.warn('verified token failed', error);
     return undefined;
   }
 };

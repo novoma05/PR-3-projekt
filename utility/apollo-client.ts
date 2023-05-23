@@ -1,7 +1,13 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
+
 import { authUtils } from '../firebase/authUtils';
-import { setContext } from "@apollo/client/link/context";
 
 // import { auth } from '../components/userContext';
 const isServer = typeof window === 'undefined';
@@ -10,11 +16,11 @@ const isServer = typeof window === 'undefined';
 const windowApolloState = !isServer && window.__NEXT_DATA__.apolloState;
 let CLIENT: ApolloClient<any>;
 const oAuthLink = () =>
-  //@ts-ignore
+  // @ts-ignore
   setContext(async ({ operationName }, { headers }) => {
     const user = authUtils.getCurrentUser() || null;
     const jwtToken = user ? await user.getIdToken() : null;
-    console.log("USER",user);
+    console.log('USER', user);
     return {
       headers: {
         ...headers,
@@ -22,7 +28,7 @@ const oAuthLink = () =>
       },
     };
   });
-  
+
 const endpoint = '/api/graphql';
 const logoutLink = (logout: VoidFunction) =>
   onError(({ graphQLErrors, networkError }) => {
@@ -66,14 +72,16 @@ type ApolloClientProps =
     };
 export function getApolloClient(parameters: ApolloClientProps) {
   const forceNew = parameters?.forceNew;
-  const logout = !parameters.forceNew ? parameters.logout : undefined;
+  const logout = parameters.forceNew ? undefined : parameters.logout;
   if (!CLIENT || forceNew) {
     CLIENT = new ApolloClient({
       ssrMode: isServer,
       uri: endpoint,
       cache: new InMemoryCache().restore(windowApolloState || {}),
       credentials: 'same-origin',
-      link: ApolloLink.from(isServer || !logout ? [httpLink()] : [logoutLink(logout), httpLink()]),
+      link: ApolloLink.from(
+        isServer || !logout ? [httpLink()] : [logoutLink(logout), httpLink()],
+      ),
       /**
         // Default options to disable SSR for all queries.
         defaultOptions: {
